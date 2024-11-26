@@ -26,4 +26,3 @@ export default async function getBlynkSensors(pin: string) {
     throw error;
   }
 }
-  
