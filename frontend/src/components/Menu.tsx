@@ -3,35 +3,33 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
-const Menu: React.FC = () => {
+export function Menu() {
   const pathname = usePathname();
 
   const routes = [
-    { name: 'Home', path: '/' },
     { name: 'Dashboard', path: '/dashboard' },
-    { name: 'Log', path: '/log' }
+    { name: 'Control', path: '/control' },
+    { name: 'History', path: '/history' }
   ];
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 bg-white p-4 rounded-t-3xl shadow-xl">
-      <div className="flex justify-around items-center">
-        {routes.map((route) => (
-          <Link key={route.path} href={route.path}>
-            <a
-              className={`text-4xl pb-9 mt-4 mb-4 transition duration-200 transform ${
-                pathname === route.path
-                  ? 'text-blue-500 border-b-2 border-blue-500'
-                  : 'text-gray-600 hover:text-blue-500'
-              }`}
-            >
-              {route.name}
-            </a>
-          </Link>
-        ))}
-      </div>
+    <div className="mt-1">
+        <h1 className="text-2xl font-bold mx-2">Menu</h1>
+        <div className="flex flex-wrap w-full">
+            {routes.map((route) => (
+            <Link key={route.path} href={route.path} className='flex-1'>
+                <div
+                className={`text-bold text-center rounded-2xl shadow-[0_20px_80px_0_rgba(0,0,0,0.3)] px-4 py-0.5 m-2 transition duration-200 transform ${
+                    pathname === route.path
+                    ? 'text-white bg-blue-500'
+                    : 'text-black hover:text-blue-500 bg-white'
+                }`}
+                >
+                {route.name}
+                </div>
+            </Link>
+            ))}
+        </div>
     </div>
   );
-};
-
-export default Menu;
-
+}

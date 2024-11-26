@@ -9,7 +9,7 @@ interface BannerProps {
 const Banner: React.FC<BannerProps> = ({ message, backgroundColor }) => {
   return (
     <div className='overflow-visible'>
-        <div className='flex space justify-between text-xl font-bold	'>
+        <div className='flex space justify-between text-xl font-bold'>
             <h1>SMART FARMER</h1>
             <h1>LOGOUT</h1>
         </div>
@@ -22,9 +22,9 @@ const Banner: React.FC<BannerProps> = ({ message, backgroundColor }) => {
                     <Image 
                         src="/jason.svg"
                         alt="json picture"
-                        width={0} // Set the width of the image
-                        height={0} // Set the height of the image
-                        objectFit="cover"
+                        width={0} 
+                        height={0}
+                        objectFit="contain"
                         layout="fill"
                     />
                 </div>
@@ -51,8 +51,6 @@ const Banner: React.FC<BannerProps> = ({ message, backgroundColor }) => {
                         </div>
                 </div>
             </div>
-        
-
         </div>
     </div>
   )
