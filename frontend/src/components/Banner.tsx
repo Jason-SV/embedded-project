@@ -11,7 +11,14 @@ const Banner: React.FC<BannerProps> = ({ message, backgroundColor }) => {
     <div className='overflow-visible'>
         <div className='flex space justify-between text-xl font-bold'>
             <h1>Smart Farmer</h1>
-            <h1>LOGOUT</h1>
+            <Image 
+                src="/lightbulb.svg"
+                alt="lightbuld picture"
+                width={30} 
+                height={30}
+                objectFit="contain"
+                layout="fixed"
+            />
         </div>
         <div className='relative h-[170px] overflow-visible'>
             <div className='absolute z-10 flex justify-between items-center w-full h-full'>
@@ -21,7 +28,7 @@ const Banner: React.FC<BannerProps> = ({ message, backgroundColor }) => {
                 <div className="w-[50%] h-[100%] relative z-20 overflow-visible absolute">
                     <Image 
                         src="/chawsuan.svg"
-                        alt="json picture"
+                        alt="chawsuan picture"
                         width={0} 
                         height={0}
                         objectFit="contain"
@@ -38,10 +45,10 @@ const Banner: React.FC<BannerProps> = ({ message, backgroundColor }) => {
                         overflow: "hidden",
                     }} >
                         <div 
-                            className="shadow-2xl rounded-full absolute"
+                            className="rounded-full absolute shadow-[0_20px_80px_0_rgba(250,250,250,0.3)]"
                             style={{
                                 backgroundImage: "linear-gradient(to right, #3EADFE , #609DFF)",
-                                top: "70%", 
+                                top: "70%",
                                 left: "10%", 
                                 transform: "translate(-50%, -50%)", 
                                 width: "500px",

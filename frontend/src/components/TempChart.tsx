@@ -6,17 +6,21 @@ interface TempChartProps {
     progress: number; // percentage of progress (0 to 100)
     radius: number; // radius of the circle
     strokeWidth: number; // width of the stroke
+    unit: string; // unit of the progress (e.g., '°C', '°F')
+    maxValue: number; // maximum value of the progress
 }
 
 const TempChart: React.FC<TempChartProps> = ({
     progress,
     radius,
-    strokeWidth
+    strokeWidth,
+    unit,
+    maxValue,
 }) => {
     const circumference = 2 * Math.PI * radius;
-    const strokeDashoffset = circumference - (progress / 100) * circumference;
+    const strokeDashoffset = circumference - (progress / maxValue) * circumference;
 
-    const margin = 20; // Additional margin around the chart
+    const margin = 10; // Additional margin around the chart
     const totalSize = (radius + strokeWidth) * 2;
     const viewBoxSize = totalSize + margin * 2;
     const center = viewBoxSize / 2;
@@ -62,13 +66,13 @@ const TempChart: React.FC<TempChartProps> = ({
                 x={center}
                 y={center + 8}
                 textAnchor="middle"
-                fontSize="30px"
+                fontSize="24px"
                 fill="#000000"
                 fontWeight="bold"
                 transform={`rotate(90, ${center}, ${center})`}
                 
             >
-                {progress}%
+                {progress} {unit} 
             </text>
         </svg>
     );

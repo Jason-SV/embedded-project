@@ -10,8 +10,8 @@ interface VerticalProgressBarProps {
 
 const VerticalProgressBar: React.FC<VerticalProgressBarProps> = ({
   progress,
-  width = "70px",
-  height = "200px",
+  width = "90px",
+  height = "300px",
 }) => {
   return (
     <div

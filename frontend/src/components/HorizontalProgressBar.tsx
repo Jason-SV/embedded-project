@@ -28,7 +28,7 @@ const HorizontalProgressBar: React.FC<HorizontalProgressBarProps> = ({
         className="absolute left-0 top-0 h-full bg-gradient-to-r from-green-400 to-blue-500 transition-width duration-300 rounded-3xl"
         style={{
           width: `${clampedProgress}%`,
-          boxShadow: "inset 0 4px 8px rgba(0, 0, 0, 0.3)",
+          boxShadow: "inset 0 6px 12px rgba(0, 0, 0, 0.5)",
         }}
       />
       {/* Circle Indicator */}
