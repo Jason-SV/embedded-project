@@ -7,11 +7,11 @@ const Page = () => {
         Water pump control
       </div>
       
-    <div className="relative w-full h-[300px]">
-        <div className="relative z-10">
-          <WaterPumpControl />
+        <div className="relative w-full h-[300px]">
+            <div className="relative z-10">
+            <WaterPumpControl />
+            </div>
         </div>
-      </div>
     </div>
   );
 };
