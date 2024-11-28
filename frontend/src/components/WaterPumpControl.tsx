@@ -1,15 +1,16 @@
-'use client';  // Add this line to mark the file as a Client Component
+// WaterPumpControl.tsx
+'use client';  
 
 import { useState } from 'react';
 import Image from 'next/image';
 
 const WaterPumpControl = () => {
-    const [isOn, setIsOn] = useState(false);  // Toggle state for the "manual" button
+    const [isOn, setIsOn] = useState(false);
     const [circleColor, setCircleColor] = useState('/lightRed.svg');  // Initial circle color
 
     const toggleSwitch = () => {
         setIsOn(!isOn);
-        setCircleColor(!isOn ? '/lightRed.svg' : '/lightGreen.svg');  // Change circle color based on the button state
+        setCircleColor(!isOn ? '/lightGreen.svg ' : '/lightRed.svg');  // Change circle color based on the button state
     };
 
     return (
@@ -17,7 +18,7 @@ const WaterPumpControl = () => {
             <div className='w-full h-[200px] rounded-xl shadow-2xl relative'>
                 <Image
                     src="/PumpCrop.png"
-                    alt="Lightbulb"
+                    alt="Pump Image"
                     width={200}
                     height={70}
                     objectFit="contain"
@@ -28,51 +29,49 @@ const WaterPumpControl = () => {
                     <div className="text-lg font-bold text-right">
                         <div className="text-[#500E0E] text-left">PUMP Status:</div>
                     </div>
-                    <div
-                        className=" w-9 h-9 rounded-full"
-                        style={{ backgroundImage: `url(${circleColor})`, backgroundSize: 'cover' }}
-                    ></div>
+                    <div className="w-9 h-9 rounded-full"
+                        style={{ backgroundImage: `url(${circleColor})`, backgroundSize: 'cover' }}>
+                    </div>
                 </div>
             </div>
             
             <div className='flex flex-row justify-between mt-10'>
-
                 <div className="text-xl font-bold text-black">
                     Manual
                 </div>
                 <div className="relative w-[100px]">
-                    <label className="absolute w-[100px] h-[40px]">
+                <label className="absolute w-[100px] h-[40px]">
                         <input
                             type="checkbox"
                             checked={isOn}
                             onChange={toggleSwitch}
                             className="opacity-0 w-0 h-0"
+                            aria-label="Toggle Switch"
                         />
                         <span
                             className={`absolute top-0 left-0 right-0 bottom-0 transition-colors duration-300 rounded-full 
-                            ${isOn ? 'bg-[#E0DFFE]' : 'bg-[#E0DFFE]'}
+                            ${isOn ? 'bg-gray-300' : 'bg-[#E0DFFE]'}
                             `}
                         >
                             <span
                                 className={`absolute top-0 bottom-0 w-[50px] h-[40px] bg-[#ffffff] rounded-full transition-transform duration-300 transform
-                                    ${isOn ? 'translate-x-[50px]' : 'translate-x-0'} shadow-[2px_2px_8px_0px_#00000040]`}
+                                ${isOn ? 'translate-x-0' : 'translate-x-[50px]'} shadow-[2px_2px_8px_0px_#00000040]`}
                             ></span>
                             <span
                                 className={`absolute left-2 top-1/2 transform -translate-y-1/2 text-sm font-bold
-                                    ${isOn ? 'text-black' : 'text-gray-500'}`}
+                                ${isOn ? 'text-gray-500' : 'text-black'}`}
                             >
                                 ON
                             </span>
                             <span
                                 className={`absolute right-2 top-1/2 transform -translate-y-1/2 text-sm font-bold
-                                    ${isOn ? 'text-gray-500' : 'text-black'}`}
+                                ${isOn ? 'text-black' : 'text-gray-500'}`}
                             >
                                 OFF
                             </span>
                         </span>
                     </label>
                 </div>
-
             </div>
         </div>
     );

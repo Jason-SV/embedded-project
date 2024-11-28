@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 
 // Define the shape of the data
 interface TableRow {
@@ -33,34 +33,83 @@ const Table: React.FC = () => {
 
   const [rowsPerPage, setRowsPerPage] = useState<number>(6);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const [isCameraActive, setIsCameraActive] = useState<boolean>(false);
+  const videoRef = useRef<HTMLVideoElement | null>(null);
 
   // Function to handle the row selection change
   const handleRowChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setRowsPerPage(Number(e.target.value));
   };
 
-  // Function to handle image click
-  const handleImageClick = (image: string) => {
-    setSelectedImage(image);
+  // Function to handle image click (to toggle camera view)
+  const handleImageClick = () => {
+    if (isCameraActive) {
+      // If the camera is already active, stop it
+      if (videoRef.current?.srcObject) {
+        const stream = videoRef.current.srcObject as MediaStream;
+        const tracks = stream.getTracks();
+        tracks.forEach((track) => track.stop());
+      }
+      setIsCameraActive(false);
+    } else {
+      // Otherwise, start the camera
+      navigator.mediaDevices.getUserMedia({ video: true })
+        .then((stream) => {
+          if (videoRef.current) {
+            videoRef.current.srcObject = stream;
+            setIsCameraActive(true);
+          }
+        })
+        .catch((error) => {
+          console.error("Error accessing webcam: ", error);
+        });
+    }
   };
 
-  // Slice the data to display the selected number of rows
   const slicedData = data.slice(0, rowsPerPage);
+  const [isVisible, setIsVisible] = useState(true);
+
 
   return (
-    <div className="container mx-auto">
+    <div>
       {/* Display selected image in the first div */}
-      <div className="w-full shadow-2xl h-[250px] bg-slate-950 rounded-xl mb-6">
-        {selectedImage ? (
-          <img
-            src={selectedImage}
-            alt="Selected"
-            className="w-full h-full object-cover rounded-xl"
-          />
-        ) : (
-          <p className="text-white text-center mt-10">Click on an image to view it here.</p>
-        )}
-      </div>
+        <div
+            className="w-full shadow-2xl h-[250px] bg-slate-950 rounded-xl mb-6 cursor-pointer"
+            onClick={handleImageClick}
+        >
+            {isCameraActive ? (
+            <video
+                ref={videoRef}
+                autoPlay
+                playsInline
+                width="100%"
+                height="100%"
+                className="object-cover rounded-xl"
+            />
+            ) : selectedImage ? (
+            <img
+                src={selectedImage}
+                alt="Selected"
+                className="w-full h-full object-cover rounded-xl"
+            />
+            ) : (
+            <p className="text-white text-center">Click to open camera.</p>
+            )}
+        </div>
+
+        <div className="flex flex-row justify-between">
+            <p>Motion Sensor: Detected</p>
+            
+            <button 
+                className={`w-25 h-10 shadow-md bg-[#e5f0e7] border-4 border-[#659A6E] text-[#659A6E] 
+                    ${isVisible ? 'opacity-100' : 'opacity-0'} rounded-[20px] font-bold flex items-center 
+                    justify-between px-2 text-base hover:bg-[#d4e8d6] hover:border-[#567d5e]`}
+            >
+                <span>Live view</span>
+                <span className="w-6 h-6 bg-[#659A6E] rounded-full"></span>
+            </button>
+
+        </div>
 
       <div className="mb-4">
         <label htmlFor="rows" className="mr-2">Select Rows:</label>
@@ -95,7 +144,7 @@ const Table: React.FC = () => {
                     src={row.image}
                     alt={row.person}
                     className="w-8 h-8 rounded-full object-cover cursor-pointer"
-                    onClick={() => handleImageClick(row.image)}
+                    onClick={() => setSelectedImage(row.image)}
                   />
                 </td>
               </tr>
