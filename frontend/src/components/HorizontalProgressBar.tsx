@@ -6,12 +6,14 @@ interface HorizontalProgressBarProps {
   progress: number;
   width?: string; // Width of the progress bar (e.g., '300px', 'w-48')
   height?: string; // Height of the progress bar (e.g., '10px', 'h-6')
+  unitOfProgress: string; // unit of the progress (e.g., '%', 'MB')
 }
 
 const HorizontalProgressBar: React.FC<HorizontalProgressBarProps> = ({
-  progress,
-  width = "300px",
-  height = "10px",
+    progress,
+    width = "300px",
+    height = "10px",
+    unitOfProgress,
 }) => {
   const clampedProgress = Math.min(Math.max(progress, 0), 100);
 
@@ -25,7 +27,7 @@ const HorizontalProgressBar: React.FC<HorizontalProgressBarProps> = ({
       aria-valuemax={100}
     >
       <div
-        className="absolute left-0 top-0 h-full bg-gradient-to-r from-green-400 to-blue-500 transition-width duration-300 rounded-3xl"
+        className="absolute left-0 top-0 h-full bg-gradient-to-r from-green-400 to-blue-500 transition-width duration-300 rounded-3xl ease-in-out"
         style={{
           width: `${clampedProgress}%`,
           boxShadow: "inset 0 6px 12px rgba(0, 0, 0, 0.5)",
@@ -33,7 +35,7 @@ const HorizontalProgressBar: React.FC<HorizontalProgressBarProps> = ({
       />
       {/* Circle Indicator */}
       <div
-        className="absolute top-1/2 bg-white rounded-full border-2 shadow-xl"
+        className="absolute top-1/2 bg-white rounded-full border-2 shadow-xl transition-transform duration-500 transform -translate-y-1/2"
         style={{
           left: `${clampedProgress}%`,
           width: "20px",
@@ -44,7 +46,7 @@ const HorizontalProgressBar: React.FC<HorizontalProgressBarProps> = ({
         }}
       />
       {/* Optional Label */}
-      <div className="absolute w-full text-black font-bold top-full mt-2 text-center mt-4"
+      <div className="absolute w-full text-black font-bold top-full mt-2 text-center mt-4 tran transition-transform duration-500 transform -translate-y-1/2"
         style={{
             left: `${clampedProgress}%`,
             width: "20px",
@@ -54,7 +56,7 @@ const HorizontalProgressBar: React.FC<HorizontalProgressBarProps> = ({
             zIndex: 10, // Ensure the circle is above the progress bar
         }}
       >
-        <p className="text-sm">{clampedProgress}%</p>
+        <p className="text-sm">{clampedProgress}{unitOfProgress}</p>
       </div>
     </div>
   );

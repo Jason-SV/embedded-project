@@ -6,12 +6,14 @@ interface VerticalProgressBarProps {
   progress: number;
   width?: string; // Width of the progress bar (e.g., '24px', 'w-6')
   height?: string; // Height of the progress bar (e.g., '192px', 'h-48')
+  maxValue: number; // maximum value of the progress
 }
 
 const VerticalProgressBar: React.FC<VerticalProgressBarProps> = ({
   progress,
   width = "90px",
   height = "300px",
+  maxValue,
 }) => {
   return (
     <div
@@ -19,7 +21,7 @@ const VerticalProgressBar: React.FC<VerticalProgressBarProps> = ({
       style={{ width, height }}
     >
       <div
-        className="absolute bottom-0 w-full bg-gradient-to-t from-green-400 to-blue-500"
+        className="absolute bottom-0 w-full bg-gradient-to-t from-green-400 to-blue-500 transition-all duration-500 ease-in-out"
         style={{
           height: `${Math.min(Math.max(progress, 0), 100)}%`,
           boxShadow: "0 -10px 20px rgba(59, 130, 246, 0.5)"

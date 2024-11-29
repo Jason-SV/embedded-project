@@ -10,7 +10,7 @@ interface TableRow {
   image: string;
 }
 
-const Table: React.FC = () => {
+const LogShow: React.FC = () => {
   // Sample data for the table
   const data: TableRow[] = [
     { id: 1, datetime: "2023-11-25 10:00 AM", person: "John Doe", image: "log/profile1.jpg" },
@@ -156,4 +156,4 @@ const Table: React.FC = () => {
   );
 };
 
-export default Table;
+export default LogShow;
