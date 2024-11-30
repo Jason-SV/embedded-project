@@ -7,7 +7,7 @@
 #include <PubSubClient.h>
 
 const int PUMP_PIN = 32;
-const int SOIL_PIN = 25;
+const int SOIL_PIN = 33;
 
 WiFiClient espClient;
 PubSubClient client(espClient);
