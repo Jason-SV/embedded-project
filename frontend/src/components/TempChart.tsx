@@ -61,6 +61,9 @@ const TempChart: React.FC<TempChartProps> = ({
                 strokeDasharray={`${circumference}px`}
                 strokeDashoffset={`${strokeDashoffset}px`}
                 filter="url(#shadow)"
+                style={{
+                    transition: 'stroke-dashoffset 1s ease-out',
+                }}
             />
             <text
                 x={center}

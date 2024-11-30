@@ -1,93 +1,108 @@
-import React, { useEffect, useState } from "react";
-import axios from "axios";
+// components/Dashboard.tsx
+"use client";
 
-const API_URL = "https://blynk.cloud/external/api/get";
-const AUTH_TOKEN = process.env.REACT_APP_BLYNK_AUTH_TOKEN;
+import React, { useState, useEffect } from 'react';
+import TempChart from "@/components/TempChart";
+import VerticalProgressBar from "@/components/VerticalProgressBar";
+import HorizontalProgressBar from "@/components/HorizontalProgressBar";
+import getNetpieData from "@/libs/getNetpieData";
 
-// List of sensors with their corresponding virtual pins and units
-const sensors = [
-  { name: "Soil Moisture", pin: "V1", unit: "%" },
-  { name: "Humidity", pin: "V2", unit: "%" },
-  { name: "Temperature", pin: "V3", unit: "°C" },
-  { name: "Light Intensity", pin: "V4", unit: "lux" },
-  { name: "Air Quality", pin: "V5", unit: "" },
-  { name: "Motion Detection", pin: "V6", unit: "" },
-];
+interface SensorData {
+  SoilMoister: number;
+  Humidity: number;
+  Temperature: number;
+  Intensity: number;
+  AirQuality: number;
+  Motion: number;
+}
 
-const Dashboard: React.FC = () => {
-  const [sensorData, setSensorData] = useState<Record<string, string>>({});
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+function normalizeData(value: number, previousValue: number, newRange: number, decimalPlaces: number = 1): number {
+  const normalized = (value / previousValue) * newRange;
+  return parseFloat(normalized.toFixed(decimalPlaces));
+}
 
-  // Function to fetch data for all sensors
-  const fetchSensorData = async () => {
-    try {
-      setError(null); // Clear previous errors
-      const data: Record<string, string> = {};
-      const promises = sensors.map((sensor) =>
-        axios
-          .get(`${API_URL}?token=${AUTH_TOKEN}&${sensor.pin}`)
-          .then((response) => {
-            data[sensor.name] = response.data;
-          })
-      );
-      await Promise.all(promises); // Wait for all requests to complete
-      setSensorData(data); // Update state with fetched data
-      setLoading(false);
-    } catch (err: any) {
-      console.error("Error fetching sensor data:", err);
-      setError("Failed to load sensor data.");
-      setLoading(false);
-    }
-  };
+const Dashboard = ({ initialData }: { initialData: SensorData }) => {
+  const [sensorData, setSensorData] = useState<SensorData>(initialData);
 
   useEffect(() => {
-    fetchSensorData(); // Fetch data initially
+    const intervalId = setInterval(async () => {
+      try {
+        const netpieData = await getNetpieData('de7beba1-0a57-4ab9-a049-cb8df3bfb050', 'owuak9Jonp7LNz9geqrNtWPM1Sgu8bDn');
+        const {
+          light, humid, temp, soil, air, motion
+        } = netpieData.data;
 
-    // Set up real-time updates every 10 seconds
-    const interval = setInterval(() => {
-      fetchSensorData();
-    }, 10000);
+        const SoilMoister_normal = normalizeData(soil, 4095, 300);
+        const Intensity_normal = normalizeData(light, 4095, 100);
+        const AirQuality_normal = normalizeData(air, 4095, 300);
 
-    // Clean up the interval on component unmount
-    return () => clearInterval(interval);
+        setSensorData({
+          SoilMoister: SoilMoister_normal,
+          Humidity: humid,
+          Temperature: temp,
+          Intensity: Intensity_normal,
+          AirQuality: AirQuality_normal,
+          Motion: motion,
+        });
+      } catch (err) {
+        console.error("Error fetching data:", err);
+      }
+    }, 5000);
+
+    return () => {
+      clearInterval(intervalId);
+    };
   }, []);
 
-  // Show loading spinner while fetching data
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-100">
-        <p className="text-lg font-medium">Loading sensor data...</p>
-      </div>
-    );
-  }
-
-  // Show error message if data fetch fails
-  if (error) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-red-100">
-        <p className="text-lg font-medium text-red-600">{error}</p>
-      </div>
-    );
-  }
+  const { SoilMoister, Humidity, Temperature, Intensity, AirQuality, Motion } = sensorData;
 
   return (
-    <div className="min-h-screen bg-gray-100 p-4">
-      <h1 className="text-2xl font-bold mb-6 text-center">
-        Smart Farm Dashboard
-      </h1>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        {sensors.map((sensor) => (
-          <div
-            key={sensor.name}
-            className="bg-white rounded shadow p-4 flex flex-col items-center"
-          >
-            <h2 className="text-lg font-medium">{sensor.name}</h2>
-            <p className="text-4xl font-bold mt-2">
-              {sensorData[sensor.name] || "N/A"} {sensor.unit}
-            </p>
+    <div>
+      <div className="grid grid-cols-2 grid-rows-3 gap-2 w-full h-[700px]">
+        <div className="col-span-1 row-span-1 rounded-xl shadow-xl">
+          <div className="flex flex-col items-center justify-center h-full p-4 gap-4">
+            <TempChart progress={SoilMoister} radius={70} strokeWidth={10} unit="wfv" maxValue={300} />
+            <div className="text-center mt-3">
+              <p className="font-bold text-base">Soil Moisture</p>
+              <p className="text-sm">Soil Moisture</p>
+            </div>
           </div>
-        ))}
+        </div>
+
+        <div className="col-span-1 row-span-2 rounded-xl shadow-xl">
+          <div className="flex flex-col items-center justify-center h-full p-4 gap-4">
+            <VerticalProgressBar progress={Intensity} maxValue={100} />
+            <div className="text-center">
+              <p className="font-bold text-base">LDR</p>
+              <p className="text-sm">Photoresistor</p>
+            </div>
+          </div>
+        </div>
+
+        <div className="col-span-1 row-span-1 rounded-xl shadow-xl">
+          <div className="flex flex-col items-center justify-center h-full p-4 gap-4">
+            <TempChart progress={AirQuality} radius={70} strokeWidth={10} unit="ppm" maxValue={300} />
+            <div className="text-center mt-3">
+              <p className="font-bold text-base">MQ-135</p>
+              <p className="text-sm">Air Quality</p>
+            </div>
+          </div>
+        </div>
+
+        <div className="col-span-2 row-span-1 rounded-xl shadow-xl h-[100%]">
+          <div className="flex flex-col items-center justify-center h-full p-4 gap-4">
+            <HorizontalProgressBar progress={Humidity} unitOfProgress="%" />
+            <div className="text-center mt-3">
+              <p className="text-sm">Humidity</p>
+            </div>
+
+            <HorizontalProgressBar progress={Temperature} unitOfProgress="°C" />
+            <div className="text-center mt-3">
+              <p className="text-sm">Temperature</p>
+            </div>
+            <p className="font-bold text-base">DHT22</p>
+          </div>
+        </div>
       </div>
     </div>
   );
