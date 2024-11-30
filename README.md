@@ -28,8 +28,9 @@ node src/server.js
 - flask
 ```
 port: 5000
+cd detection
+python3 -u "/embedded-project/detection/person_detection_api_link.py"
 ```
-
 
 ## Set Environment
 
