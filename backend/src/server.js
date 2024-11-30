@@ -5,13 +5,14 @@ dotenv.config({ path: "config/config.env" }); // Load .env file at the very top
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
-const itemRoutes = require('./routes/itemRoutes');
+const itemRoutes = require('./routes/itemRoutes'); 
 
 const app = express();
 
 // Middleware to parse JSON and URL-encoded data
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+
 
 // Ensure MONGO_URL is being loaded correctly
 const mongoUrl = process.env.MONGO_URL;

@@ -44,7 +44,6 @@ port: 5000
 PORT=4000
 
 MONGO_URL=mongodb+srv://mozart1892:<password>@cluster0.lmja0.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0
-UPLOADTHING_KEY=eyJhcGlLZXkiOiJza19saXZlXzc4NmRlNWQzZDEzZWU5NjlhOTQ5YWEzNGExMWVhYTQ2Y2M3NmVmZDk1Yzk3ZmUxYTM4ZjUwZmM0ZWEwODMwMDciLCJhcHBJZCI6ImVtdGRtc3ZzZWgiLCJyZWdpb25zIjpbInNlYTEiXX0=
 ```
 
 ## Sensors
