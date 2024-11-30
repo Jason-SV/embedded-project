@@ -1,4 +1,4 @@
-import Table from "@/components/LogShow";
+import LogShow from "@/components/LogShow";
 
 const History = () => {
     return (
@@ -8,7 +8,7 @@ const History = () => {
             </div>
             
             <div className="w-full h-[300px]">
-            <Table />
+                <LogShow />
             </div>
 
         </div>

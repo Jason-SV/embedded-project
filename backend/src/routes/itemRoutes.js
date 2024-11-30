@@ -48,52 +48,6 @@ router.get('/:id', async (req, res) => {
   }
 });
 
-// // POST /api/items - Upload image to UploadThing and store in MongoDB
-// router.post('/', upload.single('image'), async (req, res) => {
-//   try {
-//     // Check if image is provided
-//     if (!req.file) {
-//       return res.status(400).json({ message: 'Image is required' });
-//     }
-
-//     // Create a FormData object for UploadThing
-//     const formData = new FormData();
-//     formData.append('file', req.file.buffer, req.file.originalname);
-
-//     // Upload the image to UploadThing
-//     const uploadThingApiUrl = 'https://uploadthing.com/api/upload';  // Replace with actual UploadThing URL
-//     const response = await axios.post(uploadThingApiUrl, formData, {
-//       headers: {
-//         'Authorization': `Bearer ${uploadThingApiKey}:${uploadThingSecretKey}`,
-//         'Content-Type': 'multipart/form-data',
-//       },
-//     });
-
-//     // Check if UploadThing returned a valid URL
-//     if (!response.data || !response.data.url) {
-//       return res.status(400).json({ message: 'Failed to upload image to UploadThing' });
-//     }
-
-//     const imageUrl = response.data.url;
-//     const { Person } = req.body;  // Assume the `Person` field is sent in the body
-
-//     // Create a new Item and save to MongoDB
-//     const newItem = new Item({
-//       Person,
-//       ImageUrl: imageUrl,
-//     });
-
-//     await newItem.save();
-
-//     // Send success response
-//     res.status(201).json({ message: 'Item created successfully', item: newItem });
-//   } catch (err) {
-//     console.error(err);
-//     res.status(500).json({ message: 'Server error', error: err.message });
-//   }
-// });
-
-
 // POST /api/items - Create a new item in MongoDB
 router.post('/', async (req, res) => {
   try {

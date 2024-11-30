@@ -5,14 +5,27 @@ dotenv.config({ path: "config/config.env" }); // Load .env file at the very top
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
+const cors = require('cors');
 const itemRoutes = require('./routes/itemRoutes'); 
+
 
 const app = express();
 
 // Middleware to parse JSON and URL-encoded data
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
+// CORS configuration (if needed)
+const corsOptions = {
+  origin: 'http://localhost:3000', // your frontend URL
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  allowedHeaders: ['Content-Type'],
+};
+
+app.use(cors(corsOptions));
+
+
+app.use(cors());
 
 // Ensure MONGO_URL is being loaded correctly
 const mongoUrl = process.env.MONGO_URL;
