@@ -45,3 +45,14 @@ package-lock.json
 # vscode
 .vscode
 .pio
+
+# detection
+yolov4.weights
+
+# backend
+backend/node_modules
+backend/.env
+backend/.env.local
+backend/config/config.env
+
+backend/config/config.env
