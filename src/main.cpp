@@ -7,7 +7,7 @@
 #include <PubSubClient.h>
 
 const int PUMP_PIN = 32;
-const int SOIL_PIN = 25;
+const int SOIL_PIN = 33;
 
 WiFiClient espClient;
 PubSubClient client(espClient);
@@ -40,6 +40,17 @@ void connectToMQTT() {
   }
 }
 
+void getMsg(String topic, String message) {
+  if (topic == "@msg/sensor/pump") {
+    if (message == "on") {
+      digitalWrite(PUMP_PIN, HIGH);
+    }
+    else {
+      digitalWrite(PUMP_PIN, LOW);
+    }
+  }
+}
+
 void callback(char* topic, byte* payload, unsigned int length) {
   Serial.print("Message arrived [");
   Serial.print(topic);
@@ -49,6 +60,7 @@ void callback(char* topic, byte* payload, unsigned int length) {
     message = message + (char)payload[i];
   }
   Serial.println(message);
+  getMsg(String(topic), message);
 }
 
 void setup() {
@@ -61,32 +73,22 @@ void setup() {
   client.setCallback(callback);
 }
 void loop() {
-  int s = analogRead(SOIL_PIN);
-  Serial.println(s);
-  if (s > 2000) {
-    digitalWrite(PUMP_PIN, HIGH);
-  }
-  else if (s <= 1500) {
-    digitalWrite(PUMP_PIN, LOW);
-  }
-  else {
-    digitalWrite(PUMP_PIN, LOW);
-  }
   
   if (!client.connected()) {
-    Serial.println("This is line 161");
     connectToMQTT();
   }
   client.loop();
+
+  int s = analogRead(SOIL_PIN);
+  Serial.println(s);
+  
   String data = "{\"data\": {\"soil\": " + String(s) + "}}";
   data.toCharArray(msg, data.length() + 1);
 
-  Serial.println("Publish 1");
   if (!client.publish("@shadow/data/update", msg)) {
     Serial.println("Cannot publish 1");
   }
-
-  Serial.println("Publish 2");
+  
   if (!client.publish("@msg/sensor/node2", msg)) {
     Serial.println("Cannot publish 2");
   }
