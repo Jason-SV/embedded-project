@@ -31,7 +31,8 @@ void connectToMQTT() {
     if (client.connect(ID, token, secret)) {
       Serial.println("Connected to MQTT.");
       client.flush();
-      client.subscribe("@msg/sensor/node2");
+      // client.subscribe("@msg/sensor/node2");
+      client.subscribe("@msg/sensor/pump");
     } else {
       Serial.print("Failed. Error state: ");
       Serial.print(client.state());
