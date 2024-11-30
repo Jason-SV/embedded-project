@@ -18,25 +18,24 @@ void setupWiFi() {
   delay(10);
   Serial.println("Connecting to WiFi...");
   WiFi.begin(SSID, PASSWORD);
+
   while (WiFi.status() != WL_CONNECTED) {
     delay(1000);
     Serial.println("Connecting...");
   }
-  Serial.println("WiFi connected.");
+
+  Serial.println("WiFi connected");
 }
 
 void connectToMQTT() {
   while (!client.connected()) {
     Serial.println("Connecting to MQTT...");
+
     if (client.connect(ID, token, secret)) {
-      Serial.println("Connected to MQTT.");
+      Serial.println("Connected to MQTT");
       client.flush();
-<<<<<<< HEAD
-      // client.subscribe("@msg/sensor/node2");
-      client.subscribe("@msg/sensor/pump");
-=======
       client.subscribe("@msg/pump");
->>>>>>> aad2619df3760a1362791af478c547bdfe7de459
+      client.subscribe("@msg/sensor/node2");
     } else {
       Serial.print("Failed. Error state: ");
       Serial.print(client.state());
@@ -45,7 +44,7 @@ void connectToMQTT() {
   }
 }
 
-void getMsg(String topic, String message) {
+void control(String topic, String message) {
   if (topic == "@msg/pump") {
     if (message == "on") {
       digitalWrite(PUMP_PIN, HIGH);
@@ -57,15 +56,14 @@ void getMsg(String topic, String message) {
 }
 
 void callback(char* topic, byte* payload, unsigned int length) {
-  Serial.print("Message arrived [");
-  Serial.print(topic);
-  Serial.print("] ");
+  Serial.printf("Message arrived [%s] ", topic);
   String message;
   for (int i = 0; i < length; i++) {
     message = message + (char)payload[i];
   }
   Serial.println(message);
-  getMsg(String(topic), message);
+  
+  control(String(topic), message);
 }
 
 void setup() {
@@ -77,6 +75,7 @@ void setup() {
   connectToMQTT();
   client.setCallback(callback);
 }
+
 void loop() {
   
   if (!client.connected()) {
