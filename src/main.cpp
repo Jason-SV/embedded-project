@@ -31,8 +31,12 @@ void connectToMQTT() {
     if (client.connect(ID, token, secret)) {
       Serial.println("Connected to MQTT.");
       client.flush();
+<<<<<<< HEAD
       // client.subscribe("@msg/sensor/node2");
       client.subscribe("@msg/sensor/pump");
+=======
+      client.subscribe("@msg/pump");
+>>>>>>> aad2619df3760a1362791af478c547bdfe7de459
     } else {
       Serial.print("Failed. Error state: ");
       Serial.print(client.state());
@@ -42,7 +46,7 @@ void connectToMQTT() {
 }
 
 void getMsg(String topic, String message) {
-  if (topic == "@msg/sensor/pump") {
+  if (topic == "@msg/pump") {
     if (message == "on") {
       digitalWrite(PUMP_PIN, HIGH);
     }
@@ -89,7 +93,7 @@ void loop() {
   if (!client.publish("@shadow/data/update", msg)) {
     Serial.println("Cannot publish 1");
   }
-  
+
   if (!client.publish("@msg/sensor/node2", msg)) {
     Serial.println("Cannot publish 2");
   }
