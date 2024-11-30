@@ -69,8 +69,3 @@ jspm_packages/
 
 # Other files to ignore
 *.tgz
-
-# backend
-backend/node_modules
-backend/.env
-backend/config/config.env
