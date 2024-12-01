@@ -22,9 +22,11 @@ const LogShow = () => {
 
   const [motionDetected, setMotionDetected] = useState<boolean>(false);
 
+  let netpieData: any;
+
   // Fetch the data when the component mounts
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchData = setInterval(async () => {
       try {
         const fetchedData = await getHistory();
         // Map the fetched data to match the component's expected format
@@ -37,7 +39,7 @@ const LogShow = () => {
         setData(formattedData); 
 
         // Fetch motion sensor data
-        const netpieData = await getNetpieData('de7beba1-0a57-4ab9-a049-cb8df3bfb050', 'owuak9Jonp7LNz9geqrNtWPM1Sgu8bDn');
+        netpieData = await getNetpieData('de7beba1-0a57-4ab9-a049-cb8df3bfb050', 'owuak9Jonp7LNz9geqrNtWPM1Sgu8bDn');
         if (netpieData.data.motion === 1) {
           setMotionDetected(true);
         } else {
@@ -46,9 +48,11 @@ const LogShow = () => {
       } catch (error) {
         console.error("Error fetching data:", error);
       }
-    };
+    }, 1000);
 
-    fetchData();
+    return () => {
+      clearInterval(fetchData);
+    }
   }, []);
 
   // Function to handle the row selection change
