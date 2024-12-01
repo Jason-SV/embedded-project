@@ -11,4 +11,3 @@ export default async function getItems() {
       throw error; // Re-throw the error to be caught in the component
     }
   }
-  

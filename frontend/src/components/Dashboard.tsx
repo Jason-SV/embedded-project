@@ -28,9 +28,14 @@ const Dashboard = ({ initialData }: { initialData: SensorData }) => {
     const intervalId = setInterval(async () => {
       try {
         const netpieData = await getNetpieData('de7beba1-0a57-4ab9-a049-cb8df3bfb050', 'owuak9Jonp7LNz9geqrNtWPM1Sgu8bDn');
+        const netpieData2 = await getNetpieData('4d0fc2e5-11b1-47e9-a7ce-be7cab2722a3', 'csJ8vKdhHFtB2BaZu3pSAyZSQ3UrkFt6'); // add new netpie source
         const {
-          light, humid, temp, soil, air, motion
+          light, humid, temp, air, motion
         } = netpieData.data;
+
+        const {
+           soil: soil
+        } = netpieData2.data;
 
         const SoilMoister_normal = normalizeData(soil, 4095, 300);
         const Intensity_normal = normalizeData(light, 4095, 100);
