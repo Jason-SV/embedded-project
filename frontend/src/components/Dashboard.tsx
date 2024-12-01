@@ -34,7 +34,7 @@ const Dashboard = ({ initialData }: { initialData: SensorData }) => {
 
         const SoilMoister_normal = normalizeData(soil, 4095, 300);
         const Intensity_normal = normalizeData(light, 4095, 100);
-        const AirQuality_normal = normalizeData(air, 4095, 300);
+        const AirQuality_normal = normalizeData(air, 4095, 4095);
 
         setSensorData({
           SoilMoister: SoilMoister_normal,
