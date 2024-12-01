@@ -8,6 +8,18 @@ const router = express.Router();
 const cloudinary = require('cloudinary').v2;
 const multer = require('multer');
 
+function timestampToDatetime(timestampInSeconds) {
+  const timestampInMilliseconds = timestampInSeconds * 1000;
+  const datetime = new Date(timestampInMilliseconds);
+  return datetime.toISOString();
+}
+
+// Convert ISO 8601 datetime to Unix timestamp (seconds)
+function datetimeToTimestamp(datetimeString) {
+  const datetime = new Date(datetimeString);
+  return Math.floor(datetime.getTime() / 1000);
+}
+
 const upload = multer({ 
   storage: multer.memoryStorage(),
   limits: { 
@@ -22,6 +34,7 @@ const upload = multer({
     }
   }
 });
+
 
 // GET /api/items - Get all items from MongoDB
 router.get('/', async (req, res) => {
@@ -185,118 +198,6 @@ router.delete('/delete/:publicId', async (req, res) => {
     });
   }
 });
-
-
-// // POST /isad - Upload file to Cloudinary and send to detection API
-// router.post('/isad', upload_muter.single('image'), async (req, res) => {
-//   try {
-//     // Check if file exists
-//     if (!req.file) {
-//       return res.status(400).json({ 
-//         success: false, 
-//         message: 'No file uploaded' 
-//       });
-//     }
-
-//     // Get the uploaded file from the request
-//     const file = req.file;
-
-//     // Upload the file to Cloudinary
-//     const uploadResult = await new Promise((resolve, reject) => {
-//       cloudinary.uploader.upload_stream(
-//         { 
-//           folder: 'your_project_folder', 
-//           // Optional transformations
-//           transformation: [
-//             { width: 800, crop: 'limit' },
-//             { quality: 'auto' }
-//           ]
-//         }, 
-//         (error, result) => {
-//           if (error) reject(error);
-//           else resolve(result);
-//         }
-//       ).end(file.buffer);  // Use `file.buffer` for Multer memory storage
-//     });
-
-//     console.log(uploadResult);
-
-//     // post to detection api
-//     const detectionApiUrl = 'http://127.0.0.1:5000/detect-person'; 
-
-//     try {
-//       const imageUrl = uploadResult.secure_url;
-  
-//       if (!imageUrl) {
-//         return res.status(400).json({ message: 'Image URL is required' });
-//       }
-//       const response = await axios.post(detectionApiUrl, { imageUrl: imageUrl });
-//       console.log(response.data);
-//       // res.status(200).json(response.data);
-  
-//     } catch (error) {
-//       console.error('Detection API error:', error);
-//       res.status(500).json({ message: 'Server error during detection', error: error.message });
-//     }
-
-
-
-//     // post to the mongo
-//     try {
-
-//       const Person = response.data.person_detected;
-//       const ImageUrl = uploadResult.secure_url;
-
-//       console.log("Person", Person);
-//       console.log("ImageUrl", ImageUrl);
-
-//       if (Person === undefined || ImageUrl === undefined) {
-//         return res.status(400).json({
-//           success: false,
-//           message: 'Person and ImageUrl are required fields',
-//         });
-//       }
-      
-//       // Ensure person_detected is true or false
-//       if (typeof Person !== 'boolean') {
-//         return res.status(400).json({
-//           success: false,
-//           message: 'Invalid value for person_detected. Expected true or false.',
-//         });
-//       }
-  
-//       // Create a new item based on the schema
-//       const newItem = new Item({
-//         Person,
-//         ImageUrl,
-//       });
-  
-//       await newItem.save();
-  
-//       res.status(201).json({
-//         success: true,
-//         message: 'Item created successfully',
-//         item: newItem,
-//       });
-//     } catch (error) {
-//       console.error('Error creating item:', error);
-//       res.status(500).json({
-//         success: false,
-//         message: 'Server error while creating item',
-//         error: error.message,
-//       });
-//     }
-
-
-//   } catch (error) {
-//     console.error('Upload error:', error);
-//     res.status(500).json({
-//       success: false,
-//       message: 'Server error during upload',
-//       error: error.message
-//     });
-//   }
-// });
 
 router.post('/isad', upload_muter.single('image'), async (req, res) => {
   try {
