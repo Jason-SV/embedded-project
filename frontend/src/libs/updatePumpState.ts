@@ -1,7 +1,7 @@
-export default async function updatePumpState(username: string, password: string, value: "ON" | "OFF") {
+export default async function updatePumpState(username: string, password: string, value: "on" | "off") {
     // Validate topic and value
-    if (value !== "OFF" && value !== "ON") {
-        throw new Error("Invalid value for topic. Must be 'ON' or 'OFF'.");
+    if (value !== "off" && value !== "on") {
+        throw new Error("Invalid value for topic. Must be 'on' or 'off'.");
     }
 
     // Simulate delay if necessary
@@ -9,7 +9,7 @@ export default async function updatePumpState(username: string, password: string
 
     try {
         // Construct the API URL
-        const url = `https://api.netpie.io/v2/device/message?topic=${value}`;
+        const url = `https://api.netpie.io/v2/device/message?topic=pump`;
         
         // Prepare the Basic Auth credentials in base64 format
         const credentials = `${username}:${password}`;
@@ -22,6 +22,7 @@ export default async function updatePumpState(username: string, password: string
                 'Authorization': `Basic ${encodedCredentials}`,
                 'Content-Type': 'application/json',
             },
+            body: value,
             next: { tags: ['netpie'] },
         });
 

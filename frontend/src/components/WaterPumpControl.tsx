@@ -1,17 +1,36 @@
 // WaterPumpControl.tsx
 'use client';  
 
-import { useState } from 'react';
+import { use, useState } from 'react';
 import Image from 'next/image';
+import { useEffect } from 'react';
+import updatePumpState from '@/libs/updatePumpState';
 
 const WaterPumpControl = () => {
     const [isOn, setIsOn] = useState(false);
     const [circleColor, setCircleColor] = useState('/lightRed.svg');  // Initial circle color
 
-    const toggleSwitch = () => {
-        setIsOn(!isOn);
-        setCircleColor(!isOn ? '/lightGreen.svg ' : '/lightRed.svg');  // Change circle color based on the button state
+    // const toggleSwitch = () => {
+    //     setIsOn(!isOn);
+    //     setCircleColor(!isOn ? '/lightGreen.svg ' : '/lightRed.svg');  // Change circle color based on the button state
+    // };
+
+    const toggleSwitch = async () => {
+        const newState = !isOn ? 'on' : 'off';  // Toggle between 'on' and 'off'
+
+        try {
+            // Call the API to update the pump state
+            await updatePumpState('4d0fc2e5-11b1-47e9-a7ce-be7cab2722a3', 'csJ8vKdhHFtB2BaZu3pSAyZSQ3UrkFt6', newState); // Pass credentials and new state
+
+            // Update the local UI state and circle color
+            setIsOn(!isOn);
+            setCircleColor(!isOn ? '/lightGreen.svg' : '/lightRed.svg'); // Change color based on state
+        } catch (error) {
+            console.error("Error updating pump state:", error);
+            // Optionally, revert state or show an error message to the user
+        }
     };
+
 
     return (
         <div className="relative h-full py-5">
@@ -35,7 +54,7 @@ const WaterPumpControl = () => {
                 </div>
             </div>
             
-            <div className='flex flex-row justify-between mt-10'>
+            <div className='flex flex-row justify-between mt-10 mx-2'>
                 <div className="text-xl font-bold text-black">
                     Manual
                 </div>
