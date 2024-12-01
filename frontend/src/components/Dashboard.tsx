@@ -40,7 +40,7 @@ const Dashboard = ({ initialData }: { initialData: SensorData }) => {
           SoilMoister: SoilMoister_normal,
           Humidity: humid,
           Temperature: temp,
-          Intensity: Intensity_normal,
+          Intensity: Number((100 - Intensity_normal).toFixed(2)),
           AirQuality: AirQuality_normal,
           Motion: motion,
         });
