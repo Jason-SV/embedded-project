@@ -5,11 +5,16 @@
 #include "DHT_U.h"
 #include <LiquidCrystal_I2C.h>
 #include <Wire.h>
-#include "BlynkToken.h"
-#include <WiFi.h>
 #include <PubSubClient.h>
 
-#define SOIL_PIN 35
+#define SSID "Wifi-name"
+#define PASSWORD "Wifi-password"
+
+const char* mqttServer = "mqtt.netpie.io";
+const int mqttPort = 1883;
+const char* ID = "id";
+const char* token = "token";
+const char* secret = "secret";
 
 #define AIR_PIN 34
 
@@ -17,11 +22,11 @@
 
 #define MOTION_PIN 33
 
-#define PUMP_PIN 18
+// #define PUMP_PIN 18
 
 #define DHT_PIN 5
 
-#define LED_PIN 4
+// #define LED_PIN 4
 
 #define DHT_TYPE DHT22
 
@@ -29,17 +34,20 @@ DHT dht(DHT_PIN, DHT_TYPE);
 
 LiquidCrystal_I2C lcd(0x27, 16, 2);
 
+const char* client_id = "esp32_sensor";
+
 WiFiClient espClient;
 PubSubClient client(espClient);
 
 char msg[100];
+char motion[100];
 
-uint32_t readADC_Cal(int ADC_Raw)
-{
-  esp_adc_cal_characteristics_t adc_chars;  
-  esp_adc_cal_characterize(ADC_UNIT_1, ADC_ATTEN_DB_12, ADC_WIDTH_BIT_12, 1100, &adc_chars);
-  return(esp_adc_cal_raw_to_voltage(ADC_Raw, &adc_chars));
-}
+// uint32_t readADC_Cal(int ADC_Raw)
+// {
+//   esp_adc_cal_characteristics_t adc_chars;  
+//   esp_adc_cal_characterize(ADC_UNIT_1, ADC_ATTEN_DB_12, ADC_WIDTH_BIT_12, 1100, &adc_chars);
+//   return(esp_adc_cal_raw_to_voltage(ADC_Raw, &adc_chars));
+// }
 
 void setupWiFi() {
   delay(10);
@@ -53,13 +61,14 @@ void setupWiFi() {
 }
 
 void connectToMQTT() {
-  client.flush();
-  client.unsubscribe("@msg/home");
-  client.subscribe("@msg/home");
   while (!client.connected()) {
     Serial.println("Connecting to MQTT...");
     if (client.connect(ID, token, secret)) {
       Serial.println("Connected to MQTT.");
+      client.flush();
+      client.subscribe("@msg/sensor/node1");
+      client.subscribe("@msg/motion");
+      // client.subscribe("@msg/pump");
     } else {
       Serial.print("Failed. Error state: ");
       Serial.print(client.state());
@@ -78,20 +87,6 @@ float readHumid() {
   return h;
 }
 
-int readSoil() {
-  int soil = analogRead(SOIL_PIN);
-  if (soil > 2000) {
-    digitalWrite(PUMP_PIN, HIGH);
-  }
-  else if (soil <= 1500){
-    digitalWrite(PUMP_PIN, LOW);
-  }
-  else {
-    digitalWrite(PUMP_PIN, LOW);
-  }
-  return soil;
-}
-
 int readAir() {
   int air = analogRead(AIR_PIN);
   return air;
@@ -103,7 +98,7 @@ int readLight() {
 }
 
 int readMotion() {
-  int motion = analogRead(MOTION_PIN);
+  int motion = digitalRead(MOTION_PIN);
   return motion;
 }
 
@@ -121,7 +116,7 @@ void callback(char* topic, byte* payload, unsigned int length) {
 
 void setup() {
 
-  Wire.begin(21,22);
+  // Wire.begin(21,22);
 
   dht.begin();
 
@@ -131,29 +126,26 @@ void setup() {
   client.setServer(mqttServer, mqttPort);
   connectToMQTT();
 
+
   client.setCallback(callback);
 
-  pinMode(PUMP_PIN, OUTPUT);
+  // pinMode(PUMP_PIN, OUTPUT);
 
-  pinMode(SOIL_PIN, INPUT);
   pinMode(LIGHT_PIN, INPUT);
   pinMode(AIR_PIN, INPUT);
   pinMode(MOTION_PIN, INPUT);
-  pinMode(LED_PIN, OUTPUT);
+  // pinMode(LED_PIN, OUTPUT);
 
-  lcd.begin(16,2,1);
-  lcd.clear();
-  lcd.backlight();
-  lcd.setCursor(0, 0); 
+  // lcd.begin(16,2,1);
+  // lcd.clear();
+  // lcd.backlight();
+  // lcd.setCursor(0, 0); 
   Serial.println("Setup finished");
 }
 
 void loop() {
 
-  Serial.println("Start loop");
-
   if (!client.connected()) {
-    Serial.println("This is line 161");
     connectToMQTT();
   }
   client.loop();
@@ -162,29 +154,30 @@ void loop() {
   float h = readHumid();
   int l = readLight();
   int a = readAir();
-  int s = readSoil();
   int m = readMotion();
 
-  String raw = "T: " + String(t) + ", H: " +  String(h) + ", L: " +  String(l) + ", A: " + String(a) + ", S: " + String(s) + ", M: " + String(m);
+  String raw = "T: " + String(t) + ", H: " +  String(h) + ", L: " +  String(l) + ", A: " + String(a) + ", M: " + String(m);
 
   String data = "{\"data\": {\"light\": " + String(l) + ", \"humid\": " + String(h) 
-  + ", \"temp\": " + String(t) + ", \"soil\": " + String(s) + ", \"air\": " + String(a)
+  + ", \"temp\": " + String(t) + ", \"air\": " + String(a)
   + ", \"motion\": " + String(m) + "}}";
+
+  String motionDetect = String(m);
+  motionDetect.toCharArray(motion, motionDetect.length() + 1);
   data.toCharArray(msg, data.length() + 1);
 
-  Serial.println("Publish 1");
   if (!client.publish("@shadow/data/update", msg)) {
-    Serial.println("Cannot publish 1");
+    Serial.println("Cannot publish shadow");
   }
-
-  Serial.println("Publish 2");
-  if (!client.publish("@msg/home", msg)) {
-    Serial.println("Cannot publish 2");
+  if (!client.publish("@msg/sensor/node1", msg)) {
+    Serial.println("Cannot publish sensor");
   }
-
-  Serial.println(raw);
-
-  Serial.println("End loop");
+  if (!client.publish("@msg/motion", motion)) {
+    Serial.println("Cannot publish motion");
+  }
+  // if (!client.publish("@msg/sensor/node2", msg)) {
+  //   Serial.println("Cannot publish 2");
+  // }
   delay(1000);
 }
 
