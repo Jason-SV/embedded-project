@@ -199,6 +199,7 @@ router.delete('/delete/:publicId', async (req, res) => {
   }
 });
 
+
 router.post('/isad', upload_muter.single('image'), async (req, res) => {
   try {
     // Check if file exists
@@ -322,5 +323,45 @@ router.post('/detect-person', async (req, res) => {
     res.status(500).json({ message: 'Server error during detection', error: error.message });
   }
 });
+
+router.get('/image', async (req, res) => {
+  // Get the auth token from the query parameter
+  const { authToken } = req.query;
+
+  if (!authToken) {
+    return res.status(400).json({ error: 'Firebase Auth Token is required.' });
+  }
+
+  const uid = 'TTQGAzTWtHP31WfYmnSz7eYB9hy1'; // Replace with actual UID
+
+  const url = `https://esp-firebase-demo-ea857-default-rtdb.asia-southeast1.firebasedatabase.app/UsersData/${uid}/readings.json?auth=${authToken}`;
+
+  try {
+    // Make the GET request to Firebase using axios
+    const response = await axios.get(url);
+
+    const data = response.data; // Axios response data is directly in `data`
+
+    // Ensure the data is an array
+    if (!data || !Array.isArray(data)) {
+      return res.status(404).json({ error: 'No images found.' });
+    }
+
+    // Get the last image (most recent one) based on the sorted data
+    const lastImage = data[data.length - 1];
+
+    if (!lastImage || !lastImage.data) {
+      return res.status(404).json({ error: 'No image data found.' });
+    }
+
+    // Return the last image URL
+    return res.status(200).json({ image: lastImage.data });
+
+  } catch (error) {
+    console.error('Error fetching Firebase data:', error);
+    return res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
 
 module.exports = router;

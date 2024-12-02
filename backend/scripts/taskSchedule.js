@@ -1,6 +1,6 @@
 const axios = require('axios');
 const fs = require('fs');
-const Item = require('.../models/itemModel');  // Adjust path as necessary
+const Item = require('../src/models/itemModel.js');  // Adjust path as necessary
 const mongoose = require('mongoose');
 const fetch = require('node-fetch');  // Ensure 'node-fetch' is installed
 const FormData = require('form-data'); // Import FormData for sending multipart/form-data
@@ -21,7 +21,7 @@ function saveBase64Image(base64String, filePath) {
 
 // Function to retrieve data from Firebase
 async function getFirebaseData() {
-  const authToken = 'YOUR_FIREBASE_AUTH_TOKEN';  // Replace with your actual Firebase auth token
+  const authToken = 'eyJhbGciOiJSUzI1NiIsImtpZCI6IjNmZDA3MmRmYTM4MDU2NzlmMTZmZTQxNzM4YzJhM2FkM2Y5MGIyMTQiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJodHRwczovL3NlY3VyZXRva2VuLmdvb2dsZS5jb20vZmFybS1kMTdhOCIsImF1ZCI6ImZhcm0tZDE3YTgiLCJhdXRoX3RpbWUiOjE3MzMwNDk1ODksInVzZXJfaWQiOiJWd2F5YlJZRDFvWVJtaFVwYlBZOTBHczgwekgyIiwic3ViIjoiVndheWJSWUQxb1lSbWhVcGJQWTkwR3M4MHpIMiIsImlhdCI6MTczMzA0OTU4OSwiZXhwIjoxNzMzMDUzMTg5LCJlbWFpbCI6Im5pZ2h0eGFuZGVyc0BnbWFpbC5jb20iLCJlbWFpbF92ZXJpZmllZCI6ZmFsc2UsImZpcmViYXNlIjp7ImlkZW50aXRpZXMiOnsiZW1haWwiOlsibmlnaHR4YW5kZXJzQGdtYWlsLmNvbSJdfSwic2lnbl9pbl9wcm92aWRlciI6InBhc3N3b3JkIn19.QVgeutA4kJ8Nd0tX2D_R3S6GrlWELDKnrxDhR75ydLw60JlY89id_p8nVL81vp21wMZHCVmQzOes7YOHlzRLHjAGKtS8p3FV87FQZYTIC4K6mZADRhhIpDfIin91fJXSdRsLohWZfOA5Z4MnkSFCQJeUzS67R47CdbrGpF0GGgr9Zb8-HfT_hEzf7BjAg4UkEuusYRdyHJlTWNmhvqdLN7eq1yzfL4pxWWARbapgU6VHmUJxiIuM-K0Da33u3w2rdAgzqvTOSoTQslB6gwV-VEYKoBMIpISuEUuZWLmitxGSpxLUELSRBJcrNfxNGtWYeNFkozSmtvnWpELu1vDzZA';  // Replace with your actual Firebase auth token
   const uid = 'VwaybRYD1oYRmhUpbPY90Gs80zH2'; // Replace with actual user ID
 
   const url = `https://farm-d17a8-default-rtdb.asia-southeast1.firebasedatabase.app/UsersData/${uid}.json?auth=${authToken}`;
