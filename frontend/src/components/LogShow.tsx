@@ -110,7 +110,7 @@ const LogShow = () => {
             <img
                 src={selectedImage}
                 alt="Selected"
-                className="w-full h-full object-cover rounded-xl"
+                className="w-full h-full object-cover rounded-xl rotate-180"
             />
             ) : (
             <p className="text-white text-center">Click a image in image Column</p>
@@ -149,6 +149,7 @@ const LogShow = () => {
           <option value={6}>6</option>
           <option value={10}>10</option>
           <option value={15}>15</option>
+          <option value={100}>100</option>
         </select>
       </div>
 

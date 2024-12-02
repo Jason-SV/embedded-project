@@ -37,12 +37,12 @@ const Dashboard = ({ initialData }: { initialData: SensorData }) => {
            soil: soil
         } = netpieData2.data;
 
-        const SoilMoister_normal = normalizeData(soil, 4095, 300);
+        const SoilMoister_normal = normalizeData(soil, 4095, 100);
         const Intensity_normal = normalizeData(light, 4095, 100);
-        const AirQuality_normal = normalizeData(air, 4095, 4095);
+        const AirQuality_normal = normalizeData(air, 4095, 100);
 
         setSensorData({
-          SoilMoister: SoilMoister_normal,
+          SoilMoister: Number((100 - SoilMoister_normal).toFixed(2)),
           Humidity: humid,
           Temperature: temp,
           Intensity: Number((100 - Intensity_normal).toFixed(2)),
@@ -66,7 +66,7 @@ const Dashboard = ({ initialData }: { initialData: SensorData }) => {
       <div className="grid grid-cols-2 grid-rows-3 gap-2 w-full h-[700px]">
         <div className="col-span-1 row-span-1 rounded-xl shadow-xl">
           <div className="flex flex-col items-center justify-center h-full p-4 gap-4">
-            <TempChart progress={SoilMoister} radius={70} strokeWidth={10} unit="wfv" maxValue={300} />
+            <TempChart progress={SoilMoister} radius={70} strokeWidth={10} unit="%" maxValue={100} />
             <div className="text-center mt-3">
               <p className="font-bold text-base">Soil Moisture</p>
               <p className="text-sm">Soil Moisture</p>
@@ -86,7 +86,7 @@ const Dashboard = ({ initialData }: { initialData: SensorData }) => {
 
         <div className="col-span-1 row-span-1 rounded-xl shadow-xl">
           <div className="flex flex-col items-center justify-center h-full p-4 gap-4">
-            <TempChart progress={AirQuality} radius={70} strokeWidth={10} unit="ppm" maxValue={300} />
+            <TempChart progress={AirQuality} radius={70} strokeWidth={10} unit="%" maxValue={100} />
             <div className="text-center mt-3">
               <p className="font-bold text-base">MQ-135</p>
               <p className="text-sm">Air Quality</p>
