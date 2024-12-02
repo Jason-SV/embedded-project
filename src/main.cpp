@@ -2,9 +2,16 @@
 #include <WiFi.h>
 #include "esp_adc_cal.h"
 #include <Wire.h>
-#include "token.h"
-#include <WiFi.h>
 #include <PubSubClient.h>
+
+#define SSID "Jason"
+#define PASSWORD "12345678"
+
+const char* mqttServer = "mqtt.netpie.io";
+const int mqttPort = 1883;
+const char* ID = "4d0fc2e5-11b1-47e9-a7ce-be7cab2722a3";
+const char* token = "csJ8vKdhHFtB2BaZu3pSAyZSQ3UrkFt6";
+const char* secret = "BpgaFhTywJTyfND1EN9RRuPLTjBLy5Et";
 
 const int PUMP_PIN = 32;
 const int SOIL_PIN = 33;
@@ -13,6 +20,7 @@ WiFiClient espClient;
 PubSubClient client(espClient);
 
 char msg[100];
+char pump[100];
 
 void setupWiFi() {
   delay(10);
@@ -32,6 +40,7 @@ void connectToMQTT() {
       Serial.println("Connected to MQTT.");
       client.flush();
       client.subscribe("@msg/pump");
+      client.subscribe("@msg/sensor/node2");
     } else {
       Serial.print("Failed. Error state: ");
       Serial.print(client.state());
@@ -42,6 +51,9 @@ void connectToMQTT() {
 
 void getMsg(String topic, String message) {
   if (topic == "@msg/pump") {
+    String data = "{\"data\": {\"pump\": " + message + "}}";
+    data.toCharArray(pump, data.length() + 1);
+    client.publish("@shadow/data/update", pump);
     if (message == "on") {
       digitalWrite(PUMP_PIN, HIGH);
     }
@@ -80,7 +92,7 @@ void loop() {
   client.loop();
 
   int s = analogRead(SOIL_PIN);
-  Serial.println(s);
+  //Serial.println(s);
   
   String data = "{\"data\": {\"soil\": " + String(s) + "}}";
   data.toCharArray(msg, data.length() + 1);
