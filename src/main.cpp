@@ -4,14 +4,14 @@
 #include <Wire.h>
 #include <PubSubClient.h>
 
-#define SSID "Jason"
-#define PASSWORD "12345678"
+#define SSID "wifi-name"
+#define PASSWORD "wifi-password"
 
 const char* mqttServer = "mqtt.netpie.io";
 const int mqttPort = 1883;
-const char* ID = "4d0fc2e5-11b1-47e9-a7ce-be7cab2722a3";
-const char* token = "csJ8vKdhHFtB2BaZu3pSAyZSQ3UrkFt6";
-const char* secret = "BpgaFhTywJTyfND1EN9RRuPLTjBLy5Et";
+const char* ID = "id";
+const char* token = "token";
+const char* secret = "secret";
 
 const int PUMP_PIN = 32;
 const int SOIL_PIN = 33;
@@ -26,18 +26,21 @@ void setupWiFi() {
   delay(10);
   Serial.println("Connecting to WiFi...");
   WiFi.begin(SSID, PASSWORD);
+
   while (WiFi.status() != WL_CONNECTED) {
     delay(1000);
     Serial.println("Connecting...");
   }
-  Serial.println("WiFi connected.");
+
+  Serial.println("WiFi connected");
 }
 
 void connectToMQTT() {
   while (!client.connected()) {
     Serial.println("Connecting to MQTT...");
+
     if (client.connect(ID, token, secret)) {
-      Serial.println("Connected to MQTT.");
+      Serial.println("Connected to MQTT");
       client.flush();
       client.subscribe("@msg/pump");
       client.subscribe("@msg/sensor/node2");
@@ -49,7 +52,7 @@ void connectToMQTT() {
   }
 }
 
-void getMsg(String topic, String message) {
+void control(String topic, String message) {
   if (topic == "@msg/pump") {
     String data = "{\"data\": {\"pump\": " + message + "}}";
     data.toCharArray(pump, data.length() + 1);
@@ -64,15 +67,14 @@ void getMsg(String topic, String message) {
 }
 
 void callback(char* topic, byte* payload, unsigned int length) {
-  Serial.print("Message arrived [");
-  Serial.print(topic);
-  Serial.print("] ");
+  Serial.printf("Message arrived [%s] ", topic);
   String message;
   for (int i = 0; i < length; i++) {
     message = message + (char)payload[i];
   }
   Serial.println(message);
-  getMsg(String(topic), message);
+  
+  control(String(topic), message);
 }
 
 void setup() {
@@ -84,6 +86,7 @@ void setup() {
   connectToMQTT();
   client.setCallback(callback);
 }
+
 void loop() {
   
   if (!client.connected()) {
